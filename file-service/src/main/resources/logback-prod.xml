@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <!-- 文件保存日志的相关配置 -->
+    <appender name="LOG-OUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 保存日志文件的路径 -->
+        <file>/file-home/logs/fileHome.log</file>
+        <!-- 日志格式 -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%level] [%thread] %logger{80} [%file : %line] %msg%n</pattern>
+        </encoder>
+        <!-- 循环政策：基于大小和时间创建日志文件 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件名格式 -->
+            <fileNamePattern>/file-home/logs/fileHome-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <!-- 最大保存时间：30天-->
+            <maxHistory>30</maxHistory>
+            <!--单个日志最大-->
+            <maxFileSize>20MB</maxFileSize>
+            <!--应用被允许的总日志容量大小-->
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <root level="ERROR">
+        <appender-ref ref="LOG-OUT"/>
+    </root>
+</configuration>
