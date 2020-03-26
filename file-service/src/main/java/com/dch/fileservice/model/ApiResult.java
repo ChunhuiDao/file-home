@@ -3,7 +3,7 @@ package com.dch.fileservice.model;
 import lombok.Data;
 
 @Data
-public class ApiResult implements Cloneable {
+public class ApiResult {
     /**
      * 成功码
      */
@@ -24,19 +24,6 @@ public class ApiResult implements Cloneable {
      * 数据
      */
     private Object data;
-
-    private ApiResult() {
-    }
-
-    private static final ApiResult result = new ApiResult();
-
-    public static ApiResult getInstance() {
-        try {
-            return (ApiResult) result.clone();
-        } catch (CloneNotSupportedException e) {
-            return new ApiResult();
-        }
-    }
 
     public ApiResult setSuccess() {
         this.code = CODE_SUCCESS;

@@ -1,6 +1,6 @@
 package com.dch.fileservice.controller;
 
-import com.dch.fileservice.dao.UserDao;
+import com.dch.fileservice.dao.UserMapper;
 import com.dch.fileservice.model.ApiResult;
 import com.dch.fileservice.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,44 +9,41 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.concurrent.TimeUnit;
+
+import static com.dch.common.utils.CommonUtils.getBindingResultMsg;
+import static com.dch.common.utils.CommonUtils.isEmpty;
 
 @RestController
 public class TestController {
     @Autowired
-    RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
     @Autowired
-    private UserDao userDao;
+    private UserMapper userMapper;
 
     @PostMapping("/add")
     public ApiResult add(@RequestBody @Valid User user, BindingResult result) {
-        ApiResult apiResult = ApiResult.getInstance();
-        if (result.hasErrors()) {
-            StringBuffer sb = new StringBuffer();
-            result.getAllErrors().forEach(objectError -> {
-                sb.append(objectError.getDefaultMessage());
-                sb.append("； ");
-            });
-            return apiResult.setFailure().setMsg(sb.toString());
+        ApiResult apiResult = new ApiResult();
+        if (!isEmpty(getBindingResultMsg(result))) {
+            return apiResult.setFailure().setMsg(getBindingResultMsg(result));
         }
-        userDao.save(user);
-        apiResult.setSuccess().setData(apiResult);
-        return apiResult;
+        userMapper.insert(user);
+        return apiResult.setSuccess().setData(user);
     }
 
     @GetMapping("/{id}")
     public ApiResult getUser(@PathVariable("id") Integer id) {
-        ApiResult apiResult = ApiResult.getInstance();
+        ApiResult apiResult = new ApiResult();
         Object object = redisTemplate.opsForValue().get(id + "");
         User user;
-        if (null != object) {
+        if (!isEmpty(object)) {
             user = (User) object;
         } else {
-            user = userDao.getOne(id);
-            if (null != user.getId()) {
-                redisTemplate.opsForValue().set(user.getId() + "", user);
+            user = userMapper.selectById(id);
+            if (!isEmpty(user.getId())) {
+                redisTemplate.opsForValue().set(user.getId() + "", user, 30, TimeUnit.SECONDS);
             }
         }
-        apiResult.setSuccess().setData(user);
-        return apiResult;
+        return apiResult.setSuccess().setData(user);
     }
 }

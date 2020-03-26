@@ -1,39 +1,37 @@
 package com.dch.fileservice.model;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
-@Entity
-@Table(name = "user")
 @Data
+@TableName("user")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId
     private Integer id;
-
-    @Column
+    /**
+     * 账户
+     */
     @NotBlank(message = "name不能为空！")
     private String name;
-
-    @Column
+    /**
+     * 密码
+     */
     @NotBlank(message = "password不能为空！")
     private String password;
-
-    @Column
+    /**
+     * 备注
+     */
     private String note;
-
-    @Column
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
+    /**
+     * 创建时间
+     */
     private Date created;
-
-    @Column
-    @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
+    /**
+     * 更新时间
+     */
     private Date updated;
 }
