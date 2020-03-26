@@ -1,6 +1,5 @@
 package com.dch.fileservice.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,7 +14,6 @@ import static com.dch.common.utils.CommonUtils.isEmpty;
  * 登陆拦截器
  */
 @Component
-@Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
 
     /**
@@ -23,19 +21,18 @@ public class LoginInterceptor implements HandlerInterceptor {
      *
      * @param httpServletRequest
      * @param httpServletResponse
-     * @param o
+     * @param object
      * @return
      * @throws Exception
      */
     @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o)
+    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object object)
             throws Exception {
         boolean flag = false;
         //判断是否登录
         if (!isEmpty(httpServletRequest.getSession().getAttribute(SessionConfig.USER_SESSION_KEY))) {
             flag = true;
         } else {
-            log.error("未登录！");
             returnExceptionToPage(httpServletResponse, "请登录！");
         }
         return flag;
@@ -73,12 +70,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     private void returnExceptionToPage(HttpServletResponse httpServletResponse, String msg) throws Exception {
         httpServletResponse.reset();
-
         httpServletResponse.setCharacterEncoding("UTF-8");
-
+        httpServletResponse.setContentType("text/html;charset=utf-8");
         PrintWriter pw = httpServletResponse.getWriter();
         pw.write(msg);
-
         pw.flush();
         pw.close();
     }
