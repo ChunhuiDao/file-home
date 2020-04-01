@@ -25,6 +25,7 @@ public class User implements Serializable {
     private String password;
     /**
      * 11位手机号码
+     * 注册时必须填写
      */
     private String phone;
     /**
@@ -32,13 +33,13 @@ public class User implements Serializable {
      */
     private String note;
     /**
-     * 账户类型，枚举id=1
+     * 账户类型，枚举id=1：1普通账户，2管理员账户，默认1
      */
-    private Integer type;
+    private Integer type = 1;
     /**
-     * 账户状态：1有效，2无效
+     * 账户状态：1有效，2无效，默认1
      */
-    private Integer status;
+    private Integer status = 1;
     /**
      * 创建时间
      */

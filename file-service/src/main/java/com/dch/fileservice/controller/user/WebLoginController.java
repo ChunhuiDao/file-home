@@ -1,8 +1,7 @@
-package com.dch.fileservice.controller;
+package com.dch.fileservice.controller.user;
 
 import com.dch.fileservice.model.ApiResult;
 import com.dch.fileservice.model.User;
-import com.dch.fileservice.model.UserRegister;
 import com.dch.fileservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -17,10 +16,15 @@ import static com.dch.common.utils.CommonUtils.getBindingResultMsg;
 import static com.dch.common.utils.CommonUtils.isBlank;
 
 @RestController
-@RequestMapping("/user")
-public class LoginController extends BaseController {
+@RequestMapping("/web/user")
+public class WebLoginController extends BaseLoginController {
     @Autowired
     private UserService userService;
+
+    @Override
+    protected UserService getUserService() {
+        return this.userService;
+    }
 
     /**
      * 用户注册接口
@@ -30,16 +34,8 @@ public class LoginController extends BaseController {
      * @return
      */
     @PostMapping("/register")
-    public ApiResult userRegister(@RequestBody @Valid UserRegister usr, BindingResult result) {
-        ApiResult apiResult = new ApiResult();
-        if (!isBlank(getBindingResultMsg(result))) {
-            return apiResult.setFailure().setMsg(getBindingResultMsg(result));
-        }
-        User user = userService.register(usr);
-        if (null == user) {
-            return apiResult.setFailure().setMsg("该用户名或电话号码已注册！");
-        }
-        return apiResult.setSuccess().setData(user);
+    public ApiResult register(@RequestBody @Valid User user, BindingResult result) {
+        return userRegister(user, result);
     }
 
     /**
@@ -63,11 +59,6 @@ public class LoginController extends BaseController {
             return apiResult.setSuccess().setData(user).setMsg("登录成功！");
         }
         return apiResult.setFailure().setMsg("登录失败，请检查账户和密码！");
-    }
-
-    @PostMapping("/test")
-    public ApiResult test() {
-        return new ApiResult().setSuccess().setMsg("成功！");
     }
 
 }

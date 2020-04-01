@@ -68,6 +68,14 @@ mybatis-plus:
     call-setters-on-nulls: true
     # sql控制台打印
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# 有关jwt参数
+jwt:
+  # 规定的携带键名
+  jwt-head: jken
+  # 自定义密钥
+  secret-key: Mr.Dao
+  # token有效期限：12小时
+  expire: 12
 
 ---
 ######################################## dev ########################################

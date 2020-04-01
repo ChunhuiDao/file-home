@@ -87,6 +87,8 @@ public class UserServiceImpl implements UserService {
                 new QueryWrapper<User>()
                         .eq("name", user.getName())
                         .eq("password", user.getPassword())
+                        .eq("type", user.getType())
+                        .eq("status", user.getStatus())
         );
     }
 }
