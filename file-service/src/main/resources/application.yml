@@ -9,7 +9,7 @@ spring:
       # 连接池名称，默认HikariPool-1
       pool-name: HikariPool-1
       # 最大连接数，小于等于0会被重置为默认值10，大于零小于1会被重置为minimum-idle的值，理论上应等于数据库服务器的线程数
-      maximum-pool-size: 4
+      maximum-pool-size: 8
       # 连接超时时间，单位为毫秒，小于250毫秒，会被重置为默认值30秒
       connection-timeout: 60000
       # 最小空闲连接，默认值10，小于0或大于maximum-pool-size，都会重置为maximum-pool-size
@@ -26,11 +26,11 @@ spring:
     lettuce:
       pool:
         # 连接池最大连接数（使用负值表示没有限制）
-        max-active: 4
+        max-active: 8
         # 连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 500ms
         # 连接池中的最大空闲连接
-        max-idle: 4
+        max-idle: 8
         # 连接池中的最小空闲连接
         min-idle: 1
     # 连接超时时间

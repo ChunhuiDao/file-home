@@ -1,21 +1,24 @@
 package com.dch.fileservice.controller;
 
-import com.dch.fileservice.config.SessionConfig;
 import com.dch.fileservice.model.ApiResult;
 import com.dch.fileservice.model.User;
+import com.dch.fileservice.model.UserRegister;
 import com.dch.fileservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static com.dch.common.utils.CommonUtils.getBindingResultMsg;
-import static com.dch.common.utils.CommonUtils.isEmpty;
+import static com.dch.common.utils.CommonUtils.isBlank;
 
 @RestController
-public class LoginController {
+@RequestMapping("/user")
+public class LoginController extends BaseController {
     @Autowired
     private UserService userService;
 
@@ -26,13 +29,17 @@ public class LoginController {
      * @param result
      * @return
      */
-    @PostMapping("/user/register")
-    public ApiResult userRegister(@RequestBody @Valid User user, BindingResult result) {
+    @PostMapping("/register")
+    public ApiResult userRegister(@RequestBody @Valid UserRegister usr, BindingResult result) {
         ApiResult apiResult = new ApiResult();
-        if (!isEmpty(getBindingResultMsg(result))) {
+        if (!isBlank(getBindingResultMsg(result))) {
             return apiResult.setFailure().setMsg(getBindingResultMsg(result));
         }
-        return apiResult.setSuccess().setData(userService.register(user));
+        User user = userService.register(usr);
+        if (null == user) {
+            return apiResult.setFailure().setMsg("该用户名或电话号码已注册！");
+        }
+        return apiResult.setSuccess().setData(user);
     }
 
     /**
@@ -42,43 +49,25 @@ public class LoginController {
      * @return
      */
     @PostMapping("/login")
-    public ApiResult login(@RequestBody @Valid User user, BindingResult result, HttpServletRequest httpServletRequest) {
+    public ApiResult login(@RequestBody @Valid User user, BindingResult result) {
         ApiResult apiResult = new ApiResult();
-        if (!isEmpty(getBindingResultMsg(result))) {
+        if (!isBlank(getBindingResultMsg(result))) {
             return apiResult.setFailure().setMsg(getBindingResultMsg(result));
         }
-        user = userService.selectByNameAndPassword(user);
-        if (!isEmpty(user)) {
-            httpServletRequest.getSession().setAttribute(SessionConfig.USER_SESSION_KEY, user.getId());
-            return apiResult.setSuccess().setData(user);
+        if (null != getUserSession()) {
+            return apiResult.setSuccess().setData(getUserSession()).setMsg("您已登录！请勿重复登录。");
         }
-        return apiResult.setFailure();
+        user = userService.selectByNameAndPassword(user);
+        if (!isBlank(user)) {
+            setUserSession(user);
+            return apiResult.setSuccess().setData(user).setMsg("登录成功！");
+        }
+        return apiResult.setFailure().setMsg("登录失败，请检查账户和密码！");
     }
 
-    /**
-     * 登录接口
-     *
-     * @param name
-     * @param password
-     * @return
-     */
-    @GetMapping("/login/{name}/{password}")
-    public ApiResult login(@PathVariable("name") String name, @PathVariable("password") String password, HttpServletRequest httpServletRequest) {
-        ApiResult apiResult = new ApiResult();
-        User user = new User();
-        user.setName(name);
-        user.setPassword(password);
-        user = userService.selectByNameAndPassword(user);
-        if (!isEmpty(user)) {
-            httpServletRequest.getSession().setAttribute(SessionConfig.USER_SESSION_KEY, user.getId());
-            return apiResult.setSuccess().setData(user);
-        }
-        return apiResult.setFailure();
-    }
-
-    @GetMapping("/test")
-    public void test() {
-        System.out.println("========成功=========");
+    @PostMapping("/test")
+    public ApiResult test() {
+        return new ApiResult().setSuccess().setMsg("成功！");
     }
 
 }

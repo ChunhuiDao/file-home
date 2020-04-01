@@ -1,6 +1,11 @@
 package com.dch.common.utils;
 
 import org.springframework.validation.BindingResult;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 public class CommonUtils {
 
@@ -10,7 +15,7 @@ public class CommonUtils {
      * @param object
      * @return
      */
-    public static boolean isEmpty(Object object) {
+    public static boolean isBlank(Object object) {
         return null == object || "".equals(object);
     }
 
@@ -29,6 +34,16 @@ public class CommonUtils {
             });
             return sb.toString();
         }
-        return null;
+        return "";
     }
+
+    /**
+     * 获取线程中HttpServletRequest对象
+     *
+     * @return
+     */
+    public static HttpServletRequest getHttpServletRequest() {
+        return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+    }
+
 }

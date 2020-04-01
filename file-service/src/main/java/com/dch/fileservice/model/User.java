@@ -5,11 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @TableName("user")
-public class User {
+public class User implements Serializable {
     @TableId
     private Integer id;
     /**
@@ -23,9 +24,21 @@ public class User {
     @NotBlank(message = "password不能为空！")
     private String password;
     /**
+     * 11位手机号码
+     */
+    private String phone;
+    /**
      * 备注
      */
     private String note;
+    /**
+     * 账户类型，枚举id=1
+     */
+    private Integer type;
+    /**
+     * 账户状态：1有效，2无效
+     */
+    private Integer status;
     /**
      * 创建时间
      */

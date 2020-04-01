@@ -15,6 +15,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 用户注册
+     * 若返回null说明用户已存在
      *
      * @param user
      * @return
@@ -22,7 +23,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User register(User user) {
+        // 根据name查找
+        if (null != userMapper.selectOne(new QueryWrapper<User>().eq("name", user.getName()))) {
+            return null;
+        }
+        // 根据phone查找
+        if (null != userMapper.selectOne(new QueryWrapper<User>().eq("phone", user.getPhone()))) {
+            return null;
+        }
         userMapper.insert(user);
+        user = userMapper.selectById(user.getId());
         return user;
     }
 
@@ -38,6 +48,34 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 根据name查询用户
+     *
+     * @param name
+     * @return
+     */
+    @Override
+    public User selectByName(String name) {
+        return userMapper.selectOne(
+                new QueryWrapper<User>()
+                        .eq("name", name)
+        );
+    }
+
+    /**
+     * 根据phone查询用户
+     *
+     * @param phone
+     * @return
+     */
+    @Override
+    public User selectByPhone(String phone) {
+        return userMapper.selectOne(
+                new QueryWrapper<User>()
+                        .eq("phone", phone)
+        );
+    }
+
+    /**
      * 根据账户、密码查询用户
      *
      * @param user
@@ -45,9 +83,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public User selectByNameAndPassword(User user) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("name", user.getName());
-        queryWrapper.eq("password", user.getPassword());
-        return userMapper.selectOne(queryWrapper);
+        return userMapper.selectOne(
+                new QueryWrapper<User>()
+                        .eq("name", user.getName())
+                        .eq("password", user.getPassword())
+        );
     }
 }
